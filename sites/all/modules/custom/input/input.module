@@ -3,7 +3,7 @@
 
 /**
  * @file
- * Demonstrates use of the Form API.
+ * Demonstrates use of the Form API. This change change will cause a conflict.
  *
  * For a full list of elements and attributes, see:
  * http://api.drupal.org/api/drupal/developer--topics--forms_api_reference.html/7
@@ -40,7 +40,7 @@ function input_menu() {
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
-  
+
   return $items;
 }
 
@@ -82,7 +82,7 @@ function input_simple_page() {
  * Validation for input_simple_form().
  */
 function input_simple_form_validate($form, &$form_state) {
-  
+
   // Check for the color 'blue'.
   if ($form_state['values']['color'] == 'blue') {
     form_set_error('color', 'Sorry, your favorite color is actually yellow.');
@@ -94,7 +94,7 @@ function input_simple_form_validate($form, &$form_state) {
  * Submit function for input_simple_form().
  */
 function input_simple_form_submit($form, &$form_state) {
-  
+
   // Display a message upon successful submission.
   drupal_set_message(t("I like @color, too!", array('@color' => $form_state['values']['color'])));
 }
@@ -104,14 +104,14 @@ function input_simple_form_submit($form, &$form_state) {
  * A longer form with more elements and attributes.
  */
 function input_more_form($form, &$form_submit) {
-  
+
   $form['computer'] = array(
     '#title' => t('Do you own a computer?'),
     '#type' => 'radios',
     '#options' => array('yes' => t('Yes'), 'no' => t('No')),
     '#required' => TRUE,
   );
-  
+
   // Demonstrating a fieldset.
   $form['computer_stats'] = array(
     '#title' => 'Computer stats',
@@ -141,7 +141,7 @@ function input_more_form($form, &$form_submit) {
       'heavy' => t('I need help to move it.'),
     ),
   );
-  
+
   $form['help'] = array(
     '#type' => 'markup',
     '#markup' => '<p>' . t('For more information about elements and attributes, see the <a href="!url">Form API reference page</a>', array('!url' => url('http://api.drupal.org/api/drupal/developer--topics--forms_api_reference.html/7'))) . '.</p>',
@@ -150,7 +150,7 @@ function input_more_form($form, &$form_submit) {
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
-  
+
   return $form;
 }
 
@@ -166,7 +166,7 @@ function input_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'search_block_form':
       $form['#submit'][] = 'input_search_submit';
-      
+
       // A couple built-in autocomplete paths you can use:
       // user/autocomplete - Autocompletes usernames
       // taxonomy/autocomplete - Autocompletes taxonomy terms as a comma-separated list
