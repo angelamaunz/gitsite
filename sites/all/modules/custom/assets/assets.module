@@ -3,27 +3,20 @@
 
 /**
  * @file
- * Demonstrates use of the Form API.
- *
- * For a full list of elements and attributes, see:
- * http://api.drupal.org/api/drupal/developer--topics--forms_api_reference.html/7
+ * Demonstrates how to work with files and the File API.
  */
+
 
 /**
  * Implements hook_menu().
  */
-function input_menu() {
-  $items['input/examples'] = array(
-    'title' => 'Form API examples',
-    'description' => 'Example of using the Form API.',
+function assets_menu() {
+  // Menu items for unmanaged file examples.
+  $items['assets/unmanaged'] = array(
+    'title' => 'Unmanaged file example',
+    'description' => 'Examples of using processing an unmanaged file.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('input_simple_form'),
-    'access callback' => TRUE,
-  );
-  $items['input/examples/simple'] = array(
-    'title' => 'Simple',
-    'description' => 'Simple example using a page callback.',
-    'page callback' => 'input_simple_page',
+    'page arguments' => array('assets_unmanaged_file_form'),
     'access callback' => TRUE,
   );
   return $items;
@@ -31,15 +24,19 @@ function input_menu() {
 
 
 /**
- * A simple form.
+ * Returns form array with an example file input for an unmanaged file.
  */
-function input_simple_form($form, &$form_submit) {
-  $form['color'] = array(
-    '#title' => t('Favorite color'),
-    '#type' => 'textfield',
-    '#required' => TRUE,
-    '#description' => t('What is your favorite color? Blue? No, wait-'),
+function assets_unmanaged_file_form($form, &$form_state) {
+
+  // Required for forms with file inputs.
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
+
+  // Example of an unmanaged file
+  $form['unmanaged_file'] = array(
+    '#title' => t('Unmanaged file example'),
+    '#type' => 'file'
   );
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Submit',
@@ -49,15 +46,34 @@ function input_simple_form($form, &$form_submit) {
 
 
 /**
- * Page demonstrating embedding a form on a page.
+ * Validation for unmanaged file form.
  */
-function input_simple_page() {
-  $build = array(
-    'header_text' => array(
-      '#type' => 'markup',
-      '#markup' => '<p>' . t('To add additional content to a form page, you can use a page callback and return a render array like this.') . '</p>',
-    ),
-    'example_form' => drupal_get_form('input_simple_form'),
-  );
-  return $build;
+function assets_unmanaged_file_form_validate($form, &$form_state) {
+
+  $file = file_save_upload('unmanaged_file');
+
+  if (isset($file)) {
+    // File upload was attempted.
+    if ($file) {
+      // Put the temporary file in form_values so we can save it on submit.
+      $form_state['values']['unmanaged_file'] = $file;
+    }
+    else {
+      form_set_error('unmanaged_file', t('The file could not be uploaded.'));
+    }
+  }
+}
+
+
+/**
+ * Implements hook_file_validate().
+ *
+ * We're testing to see if the string 'test.' exists in the file name.
+ */
+function assets_file_validate($file) {
+  $errors = array();
+  if (strpos($file->filename, 'test.') !== FALSE) {
+    $errors[] = 'The filename "test" is reserved, please change the filename and try again.';
+  }
+  return $errors;
 }
